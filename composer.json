@@ -43,8 +43,8 @@
         "analyze": [
             "phpcs --standard=phpcs-standard.xml --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 --colors src/",
             "phpstan analyse --ansi --no-progress; exit 0",
-            "psalm --show-info=true --no-progress --no-cache; exit 0",
-            "psalm --show-info=true --no-progress --no-cache --taint-analysis; exit 0",
+            "psalm --threads=1 --show-info=true --no-progress --no-cache; exit 0",
+            "psalm --threads=1 --show-info=true --no-progress --no-cache --taint-analysis; exit 0",
             "phpmd src/ ansi phpmd.xml --ignore-violations-on-exit"
         ]
     }
