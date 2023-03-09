@@ -1,0 +1,231 @@
+<?xml version="1.0"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="PHP_CodeSniffer"
+         xsi:noNamespaceSchemaLocation="phpcs.xsd">
+    <description>LichtPHP strict coding standard, based on PSR12 but with opening braces on the same line.</description>
+
+    <!-- Primary code style we follow -->
+    <rule ref="PSR12">
+        <!-- Not the style we use, we like them on the same line -->
+        <exclude name="Squiz.Functions.MultiLineFunctionDeclaration.BraceOnSameLine"/>
+        <exclude name="PSR2.Classes.ClassDeclaration.OpenBraceNewLine"/>
+
+        <!-- Control structures split over several lines should not require boilerplate lines -->
+        <exclude name="PSR12.ControlStructures.ControlStructureSpacing.FirstExpressionLine"/>
+        <exclude name="PSR12.ControlStructures.ControlStructureSpacing.CloseParenthesisLine"/>
+
+        <!-- ??? Completely idiotic -->
+        <exclude name="PSR12.Files.FileHeader.SpacingAfterBlock"/>
+    </rule>
+
+    <!-- Also be compliant with older, simpler code styles -->
+    <rule ref="PSR1"/>
+    <rule ref="PSR2"/>
+
+    <!-- Stylistic choices -->
+    <rule ref="Generic">
+        <exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
+        <!-- Unavoidable when implementing interfaces -->
+        <exclude name="Generic.CodeAnalysis.UnusedFunctionParameter"/>
+        <exclude name="Generic.Commenting.DocComment"/>
+        <exclude name="Generic.Commenting.Todo"/>
+        <exclude name="Generic.Files.EndFileNoNewline"/>
+        <!-- Doesn't work with Windows filesystems, PHP files in bin/ may be executable -->
+        <exclude name="Generic.Files.ExecutableFile"/>
+        <exclude name="Generic.Files.LowercasedFilename"/>
+        <exclude name="Generic.Formatting.MultipleStatementAlignment"/>
+        <exclude name="Generic.Formatting.NoSpaceAfterCast"/>
+        <exclude name="Generic.Formatting.SpaceAfterNot"/>
+        <exclude name="Generic.Formatting.SpaceBeforeCast"/>
+        <exclude name="Generic.Functions.OpeningFunctionBraceBsdAllman"/>
+        <exclude name="Generic.NamingConventions.CamelCapsFunctionName"/>
+        <exclude name="Generic.NamingConventions.InterfaceNameSuffix"/>
+        <exclude name="Generic.PHP.ClosingPHPTag"/>
+        <exclude name="Generic.PHP.UpperCaseConstant"/>
+        <exclude name="Generic.WhiteSpace.DisallowSpaceIndent"/>
+    </rule>
+    <rule ref="Generic.Strings.UnnecessaryStringConcat">
+        <!-- Allow useless concatenations when needed to fit line length -->
+        <properties>
+            <property name="allowMultiline" value="true"/>
+        </properties>
+    </rule>
+
+    <!-- Functional requirements -->
+    <rule ref="Generic.PHP.RequireStrictTypes"/>
+    <rule ref="Generic.PHP.ForbiddenFunctions">
+        <properties>
+            <property name="forbiddenFunctions" type="array">
+                <!-- Unclean code or old ways -->
+                <element key="isset" value="array_key_exists"/>
+                <!-- <element key="unset" value="null"/> -->
+                <element key="empty" value="null"/>
+                <element key="is_null" value="null"/>
+                <element key="gettype" value="null"/>
+                <element key="settype" value="null"/>
+                <!-- No dynamic constants, use const instead -->
+                <element key="define" value="null"/>
+                <element key="defined" value="null"/>
+                <element key="constant" value="null"/>
+                <!-- Aliases -->
+                <element key="die" value="exit"/>
+                <element key="user_error" value="trigger_error"/>
+                <element key="is_double" value="is_float"/>
+                <element key="is_real" value="is_float"/>
+                <element key="is_integer" value="is_int"/>
+                <element key="array" value="null"/>
+                <!-- Use casts instead -->
+                <element key="boolval" value="null"/>
+                <element key="intval" value="null"/>
+                <element key="floatval" value="null"/>
+                <element key="doubleval" value="null"/>
+                <element key="strval" value="null"/>
+                <!-- Odd usecase -->
+                <element key="class_alias" value="null"/>
+                <!-- Use $obj::class, static::class instead -->
+                <element key="get_class" value="null"/>
+                <element key="get_called_class" value="null"/>
+                <!-- Use explicit Reflection instead -->
+                <element key="get_class_methods" value="null"/>
+                <element key="get_class_vars" value="null"/>
+                <element key="get_mangled_object_vars" value="null"/>
+                <element key="get_object_vars" value="null"/>
+                <element key="get_parent_class" value="null"/>
+                <!-- Inconsistent since they don't autoload everything -->
+                <element key="get_declared_classes" value="null"/>
+                <element key="get_declared_interfaces" value="null"/>
+                <element key="get_declared_traits" value="null"/>
+                <element key="get_defined_constants" value="null"/>
+                <element key="get_defined_functions" value="null"/>
+                <element key="get_defined_vars" value="null"/>
+                <!-- Use instanceof instead -->
+                <element key="is_a" value="null"/>
+                <element key="is_subclass_of" value="null"/>
+                <!-- Use $callable() syntax instead -->
+                <element key="call_user_func_array" value="null"/>
+                <element key="call_user_func" value="null"/>
+                <element key="forward_static_call_array" value="null"/>
+                <element key="forward_static_call" value="null"/>
+                <!-- Use variadics instead -->
+                <element key="func_get_arg" value="null"/>
+                <element key="func_get_args" value="null"/>
+                <element key="func_num_args" value="null"/>
+                <!-- Permanently changes the worker processes locale -->
+                <element key="setlocale" value="null"/>
+                <!-- Debugging functions -->
+                <element key="print_r" value="null"/>
+                <element key="var_dump" value="null"/>
+                <element key="var_export" value="null"/>
+                <element key="var_representation" value="null"/>
+                <element key="debug_backtrace" value="null"/>
+                <element key="debug_print_backtrace" value="null"/>
+                <element key="debug_zval_dump" value="null"/>
+                <element key="get_debug_type" value="null"/>
+                <element key="get_resources" value="null"/>
+                <element key="show_source" value="null"/>
+                <element key="highlight_file" value="null"/>
+                <element key="php_strip_whitespace" value="null"/>
+                <element key="phpinfo" value="null"/>
+                <!-- Custom error handler makes these useless -->
+                <element key="error_clear_last" value="null"/>
+                <element key="error_get_last" value="null"/>
+
+                <!-- Disabled functions (except ini_ getters) -->
+                <!-- Low level system functions not necessary for web apps, disabled -->
+                <element key="pcntl_alarm" value="null"/>
+                <element key="pcntl_async_signals" value="null"/>
+                <element key="pcntl_errno" value="null"/>
+                <element key="pcntl_exec" value="null"/>
+                <element key="pcntl_fork" value="null"/>
+                <element key="pcntl_get_last_error" value="null"/>
+                <element key="pcntl_getpriority" value="null"/>
+                <element key="pcntl_rfork" value="null"/>
+                <element key="pcntl_setpriority" value="null"/>
+                <element key="pcntl_signal" value="null"/>
+                <element key="pcntl_signal_dispatch" value="null"/>
+                <element key="pcntl_signal_get_handler" value="null"/>
+                <element key="pcntl_sigprocmask" value="null"/>
+                <element key="pcntl_sigtimedwait" value="null"/>
+                <element key="pcntl_sigwaitinfo" value="null"/>
+                <element key="pcntl_strerror" value="null"/>
+                <element key="pcntl_unshare" value="null"/>
+                <element key="pcntl_wait" value="null"/>
+                <element key="pcntl_waitpid" value="null"/>
+                <element key="pcntl_wexitstatus" value="null"/>
+                <element key="pcntl_wifcontinued" value="null"/>
+                <element key="pcntl_wifexited" value="null"/>
+                <element key="pcntl_wifsignaled" value="null"/>
+                <element key="pcntl_wifstopped" value="null"/>
+                <element key="pcntl_wstopsig" value="null"/>
+                <element key="pcntl_wtermsig" value="null"/>
+                <element key="posix_kill" value="null"/>
+                <element key="posix_mkfifo" value="null"/>
+                <element key="posix_mknod" value="null"/>
+                <element key="posix_setegid" value="null"/>
+                <element key="posix_seteuid" value="null"/>
+                <element key="posix_setgid" value="null"/>
+                <element key="posix_setpgid" value="null"/>
+                <element key="posix_setrlimit" value="null"/>
+                <element key="posix_setsid" value="null"/>
+                <element key="posix_setuid" value="null"/>
+                <!-- Configuration setter and getter -->
+                <element key="ini_alter" value="null"/>
+                <element key="ini_restore" value="null"/>
+                <element key="ini_set" value="null"/>
+                <element key="ini_get_all" value="null"/>
+                <element key="ini_get" value="null"/>
+                <element key="get_cfg_var" value="null"/>
+                <!-- Messing with garbage collector -->
+                <element key="gc_collect_cycles" value="null"/>
+                <element key="gc_disable" value="null"/>
+                <element key="gc_enable" value="null"/>
+                <element key="gc_enabled" value="null"/>
+                <element key="gc_mem_caches" value="null"/>
+                <element key="gc_status" value="null"/>
+                <!-- Webserver functionality -->
+                <element key="apache_child_terminate" value="null"/>
+                <element key="apache_get_modules" value="null"/>
+                <element key="apache_get_version" value="null"/>
+                <element key="apache_getenv" value="null"/>
+                <element key="apache_lookup_uri" value="null"/>
+                <element key="apache_note" value="null"/>
+                <element key="apache_request_headers" value="null"/>
+                <element key="apache_response_headers" value="null"/>
+                <element key="apache_setenv" value="null"/>
+                <element key="getallheaders" value="null"/>
+                <element key="virtual" value="null"/>
+                <element key="fpm_get_status" value="null"/>
+                <!-- Dynamic loading of native code -->
+                <element key="dl" value="null"/>
+                <!-- Listening sockets -->
+                <element key="socket_accept" value="null"/>
+                <element key="socket_create_listen" value="null"/>
+                <element key="socket_listen" value="null"/>
+                <!-- Processes / exec -->
+                <element key="popen" value="null"/>
+                <element key="proc_close" value="null"/>
+                <element key="proc_get_status" value="null"/>
+                <element key="proc_nice" value="null"/>
+                <element key="proc_open" value="null"/>
+                <element key="proc_terminate" value="null"/>
+                <element key="shell_exec" value="null"/>
+                <element key="system" value="null"/>
+                <element key="exec" value="null"/>
+                <element key="passthru" value="null"/>
+                <!-- OPcache information leak -->
+                <element key="opcache_compile_file" value="null"/>
+                <element key="opcache_get_configuration" value="null"/>
+                <element key="opcache_get_status" value="null"/>
+                <element key="opcache_invalidate" value="null"/>
+                <element key="opcache_is_script_cached" value="null"/>
+                <element key="opcache_reset" value="null"/>
+                <!-- Direct access to syslog -->
+                <element key="syslog" value="null"/>
+                <element key="openlog" value="null"/>
+                <!-- Dangerous -->
+                <element key="eval" value="null"/>
+                <element key="create_function" value="null"/>
+                <element key="__halt_compiler" value="exit"/>
+            </property>
+        </properties>
+    </rule>
+</ruleset>

@@ -1,0 +1,53 @@
+{
+    "name": "agentoak/lichtphp",
+    "description": "Yet another lightweight PHP framework.",
+    "type": "library",
+    "homepage": "https://github.com/AgentOak/lichtphp",
+    "license": "LGPL-3.0-or-later",
+    "readme": "README.md",
+    "support": {
+        "source": "https://github.com/AgentOak/lichtphp",
+        "issues": "https://github.com/AgentOak/lichtphp/issues"
+    },
+    "minimum-stability": "stable",
+    "config": {
+        "optimize-autoloader": true
+    },
+    "autoload": {
+        "psr-4": {
+            "LichtPHP\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^8.1",
+        "ext-json": "*",
+        "ext-curl": "*",
+        "psr/clock": "^1.0",
+        "psr/simple-cache": "^3.0"
+    },
+    "suggest": {
+        "ext-redis": "Used as cache backend. Requires version 4.0.0 or newer.",
+        "ext-igbinary": "Store data in cache in a faster binary serialization format."
+    },
+    "provide": {
+        "psr/clock-implementation": "1.0.0",
+        "psr/simple-cache-implementation": "3.0.0"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest",
+        "phpstan/phpstan": "^1.10",
+        "phpstan/phpstan-strict-rules": "^1.5",
+        "squizlabs/php_codesniffer": "^3.7",
+        "vimeo/psalm": "^5.7",
+        "phpmd/phpmd": "^2.13"
+    },
+    "scripts": {
+        "analyze": [
+            "phpcs --standard=phpcs-standard.xml --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 --colors src/",
+            "phpstan analyse --ansi --no-progress; exit 0",
+            "psalm --show-info=true --no-progress --no-cache; exit 0",
+            "psalm --show-info=true --no-progress --no-cache --taint-analysis; exit 0",
+            "phpmd src/ ansi phpmd.xml --ignore-violations-on-exit"
+        ]
+    }
+}
