@@ -1,0 +1,9 @@
+# default EOL behavior: use LF in repo, normalize (convert to native) during checkout
+* text=auto
+
+.gitignore text
+.gitattributes text
+.editrconfig text
+
+# text files that will always have LF EOLs
+*.sh text eol=lf
