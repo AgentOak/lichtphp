@@ -11,7 +11,7 @@ class INIConfiguration implements Configuration {
     /**
      * @param array<string, string|array<string, string>> $options
      */
-    public function __construct(
+    protected function __construct(
         private readonly array $options,
         private readonly string $sectionName
     ) {
