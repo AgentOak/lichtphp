@@ -22,9 +22,12 @@
         <!-- Exit calls are needed for error handling -->
         <exclude name="ExitExpression"/>
     </rule>
-    <rule ref="rulesets/naming.xml"/>
+    <rule ref="rulesets/naming.xml">
+        <!-- Short variables names can be fine, e.g. $i in for-loops or $id -->
+        <exclude name="ShortVariable"/>
+    </rule>
     <rule ref="rulesets/unusedcode.xml">
-        <!-- Used in Template, does not detect first class callables -->
+        <!-- Does not detect first class callables -->
         <exclude name="UnusedPrivateMethod"/>
         <!-- Does not understand interfaces -->
         <exclude name="UnusedFormalParameter"/>
