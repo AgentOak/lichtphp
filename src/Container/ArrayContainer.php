@@ -25,7 +25,7 @@ use Psr\Container\ContainerInterface;
  *
  * @see https://www.php-fig.org/psr/psr-11/
  * @see https://www.php-fig.org/psr/psr-11/meta/
- * @implements ArrayAccess<class-string, object>
+ * @extends ArrayAccess<class-string, object>
  */
 interface ArrayContainer extends ContainerInterface, ArrayAccess {
     // TODO: Support sealing, i.e. no more IDs may be registered/put after seal()? Require seal() before get()?
