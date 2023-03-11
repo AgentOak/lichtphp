@@ -4,12 +4,16 @@ declare(strict_types=1);
 namespace LichtPHP\SimpleCache;
 
 use DateInterval;
-use LichtPHP\Clock\RealClock;
 use LichtPHP\Util;
+use Psr\Clock\ClockInterface;
+use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 
 /**
- * Base class for implementations of PSR-16: Simple cache.
+ * Base class for implementations of PSR-16: Simple cache and Cache.
+ *
+ * @see CacheInterface
+ * @see Cache
  */
 abstract class AbstractCache implements Cache {
     // TODO: Add support for layering?
@@ -22,14 +26,26 @@ abstract class AbstractCache implements Cache {
      */
     protected const KEY_REGEX = "/[a-zA-Z\d_.]{1,64}/";
 
+    /**
+     * @param ClockInterface $clock Clock to obtain a reference time from when converting DateIntervals to seconds
+     */
+    protected function __construct(protected readonly ClockInterface $clock) {
+    }
+
     protected static function validateKey(string $key): void {
         if (Util::ensure(preg_match(static::KEY_REGEX, $key)) === 0) {
             throw new SimpleCacheInvalidArgumentException("Given key has invalid format");
         }
     }
 
-    protected static function intervalToSeconds(DateInterval $interval): int {
-        $now = (new RealClock())->now(); // TODO: Get from DI container?
+    protected function intervalToSeconds(DateInterval $interval): int {
+        /*
+         * DateIntervals cannot be directly converted into seconds, because they store years, months, days, hours,
+         * minutes and seconds separately. However, not every month has the same number of days (also leap years and
+         * leap seconds exist). To know the specific amount of time an interval represents, you need a point in time
+         * as reference. Our best bet is to use the current time as starting point, therefore we need access to a clock.
+         */
+        $now = $this->clock->now();
         return $now->add($interval)->getTimestamp() - $now->getTimestamp();
     }
 
@@ -55,7 +71,7 @@ abstract class AbstractCache implements Cache {
 
         // Not necessary but saves DateTimeImmutable construction for every individual set()
         if ($ttl instanceof DateInterval) {
-            $ttl = static::intervalToSeconds($ttl);
+            $ttl = $this->intervalToSeconds($ttl);
         }
 
         $success = true;

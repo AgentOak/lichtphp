@@ -5,11 +5,18 @@ namespace LichtPHP\SimpleCache;
 
 use DateInterval;
 use LichtPHP\Util;
+use Psr\Clock\ClockInterface;
 use Psr\SimpleCache\CacheException;
 use Redis;
 use RedisException;
 use RuntimeException;
 
+/**
+ * Implementation of PSR-16: Simple cache and Cache, using a Redis server as backend. Requires phpredis extension.
+ *
+ * @see CacheInterface
+ * @see Cache
+ */
 final class RedisCache extends AbstractCache {
     /**
      * @var non-empty-string
@@ -24,8 +31,10 @@ final class RedisCache extends AbstractCache {
      * @throws RuntimeException If Redis extension is not available
      * @see Redis::pconnect()
      * @see Redis::OPT_PREFIX
+     * @see AbstractCache::__construct()
      */
     public function __construct(
+        ClockInterface $clock,
         private readonly string $host,
         private readonly int $port,
         private readonly float $timeout = 0.0,
@@ -35,6 +44,8 @@ final class RedisCache extends AbstractCache {
         if (!class_exists(Redis::class)) {
             throw new RuntimeException("PHP extension Redis not loaded");
         }
+
+        parent::__construct($clock);
 
         // TODO: Update to phpredis 6.0.0 constructor initialization
         $this->redis = new Redis();
@@ -75,7 +86,7 @@ final class RedisCache extends AbstractCache {
         self::validateKey($key);
 
         if ($ttl instanceof DateInterval) {
-            $ttl = self::intervalToSeconds($ttl);
+            $ttl = $this->intervalToSeconds($ttl);
         }
 
         if (is_int($ttl) && $ttl <= 0) {

@@ -4,28 +4,25 @@ declare(strict_types=1);
 namespace LichtPHP\Clock;
 
 use DateTimeImmutable;
-use Exception;
 use LichtPHP\Util;
-use Psr\Clock\ClockInterface;
+use RuntimeException;
 
 /**
  * Implementation of PSR-20: Clock based on $_SERVER request time. For CLI this contains the script start time.
- * Note that this always returns the same time on each now() call and cannot be used to measure durations during the
- * scripts execution.
+ *
+ * @see FrozenClock
  */
-final class RequestTimeClock implements ClockInterface {
-    private readonly DateTimeImmutable $requestTime;
-
+final class RequestTimeClock extends FrozenClock {
     /**
-     * @throws Exception When creating DateTimeImmutable object failed
+     * @throws RuntimeException When creating DateTimeImmutable object failed
      */
     public function __construct() {
-        $this->requestTime = Util::ensure(
-            DateTimeImmutable::createFromFormat("U.u", (string) $_SERVER["REQUEST_TIME_FLOAT"])
-        );
-    }
+        if (!array_key_exists("REQUEST_TIME_FLOAT", $_SERVER)) {
+            throw new RuntimeException("Request time unavailable");
+        }
 
-    public function now(): DateTimeImmutable {
-        return $this->requestTime;
+        parent::__construct(Util::ensure(
+            DateTimeImmutable::createFromFormat("U.u", (string) $_SERVER["REQUEST_TIME_FLOAT"])
+        ));
     }
 }

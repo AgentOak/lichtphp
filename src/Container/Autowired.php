@@ -35,5 +35,5 @@ use Attribute;
  */
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_METHOD)]
 class Autowired {
-    // TODO: Support attribute properties to denominate object name? i.e. cache type?
+    // TODO: Support attribute properties to denominate object name? e.g. cache type?
 }

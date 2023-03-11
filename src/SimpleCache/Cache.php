@@ -7,6 +7,13 @@ use DateInterval;
 use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 
+/**
+ * Extends PSR-16: Simple cache with convenient methods that accept callables.
+ *
+ * @see https://www.php-fig.org/psr/psr-16/
+ * @see https://www.php-fig.org/psr/psr-16/meta/
+ * @see CacheInterface
+ */
 interface Cache extends CacheInterface {
     /**
      * Like get(), but calls a given callable to produce a default value if and only if the key is absent from the
