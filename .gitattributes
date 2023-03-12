@@ -3,7 +3,7 @@
 
 .gitignore text
 .gitattributes text
-.editrconfig text
+.editorconfig text
 
 # text files that will always have LF EOLs
 *.sh text eol=lf
