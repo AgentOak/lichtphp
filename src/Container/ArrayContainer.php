@@ -7,6 +7,7 @@ use ArrayAccess;
 use LogicException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * Extends PSR-11: Container Interface with ability to put objects into the Container. Objects that have been stored
@@ -14,7 +15,9 @@ use Psr\Container\ContainerInterface;
  * "Psr\Container\ContainerInterface" ID, this interfaces fully-qualified name and its own fully-qualified class name.
  *
  * This container support IDs that specify a non-built-in type, i.e. a class or interface (including those predefined
- * in the PHP library).
+ * in the PHP library). The validity of IDs is only checked when adding elements into the container to be compliant with
+ * PSR-11. Naturally, it follows that for invalid IDs, has() can only ever return false, and get() can only throw a
+ * NotFoundExceptionInterface.
  *
  * For consistency reasons, once stored, objects cannot be removed or overwritten.
  *
@@ -25,6 +28,8 @@ use Psr\Container\ContainerInterface;
  *
  * @see https://www.php-fig.org/psr/psr-11/
  * @see https://www.php-fig.org/psr/psr-11/meta/
+ * @see ContainerInterface
+ * @see NotFoundExceptionInterface
  * @extends ArrayAccess<class-string, object>
  */
 interface ArrayContainer extends ContainerInterface, ArrayAccess {
@@ -36,7 +41,7 @@ interface ArrayContainer extends ContainerInterface, ArrayAccess {
      *
      * @template T of object
      * @param class-string<T> $id A fully-qualified non-built-in type name, i.e. the name of a class or interface
-     * @param T $implementation An object whose type extends, implements or uses the type specified by the id
+     * @param T $implementation An object whose type extends or implements the type specified by the $id
      * @throws ContainerExceptionInterface If $id is not a non-built-in type or an entry for this $id already exists
      */
     public function put(string $id, object $implementation): void;

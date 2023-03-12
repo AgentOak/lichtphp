@@ -19,6 +19,20 @@ use ReflectionProperty;
 /**
  * Provides methods for autowiring, obtaining dependency instances from a ContainerInterface.
  *
+ * By-reference and variadic parameters as well as union and intersection types are not supported and will throw an
+ * AutowiringException whenever they are encountered.
+ *
+ * Constructor and method parameters that are not typehinted with a class name, but have a default value, are ignored
+ * and retain their default value. Otherwise, parameters MUST be typehinted with a class name, or an AutowiringException
+ * will be thrown. Properties with the Autowired attribute MUST always be typehinted with a class name, otherwise an
+ * AutowiringException will be thrown.
+ *
+ * Specifying default values for a parameter or property makes an optional dependency; the Autowirer will try to resolve
+ * the dependency but if it is not available, it will use the default value. Additionally, nullable types may be used to
+ * specify an optional dependency; if the Autowirer cannot resolve the dependency, it will assign null. Default values
+ * have precedence over null. If neither the type is nullable, nor a default value is given, the dependency is required
+ * and an AutowiringException will be thrown if it cannot be satisfied.
+ *
  * @see ContainerInterface
  * @see Autowired
  */
@@ -84,7 +98,7 @@ class Autowirer {
     }
 
     /**
-     * Autowire methods and properties of an object that are annotated with Autowired.
+     * Autowire methods and properties of an object that have the Autowired attribute.
      *
      * @throws AutowiringException
      * @see Autowired for semantics
@@ -166,7 +180,7 @@ class Autowirer {
         if ($type === null) {
             // Without type hint, the only allowed case is a parameter with a default value available
             // Properties without type hints are not allowed (why even set the Autowired attribute?)
-            if ($variable instanceof ReflectionParameter && $variable->isOptional()) {
+            if ($variable instanceof ReflectionParameter && $variable->isDefaultValueAvailable()) {
                 return false;
             }
 
@@ -190,7 +204,7 @@ class Autowirer {
         }
 
         // Dependency is unsatisfied; use default or null if possible
-        if (($variable instanceof ReflectionParameter && $variable->isOptional()) ||
+        if (($variable instanceof ReflectionParameter && $variable->isDefaultValueAvailable()) ||
             ($variable instanceof ReflectionProperty && $variable->hasDefaultValue())) {
             return false;
         } elseif ($type->allowsNull()) {
