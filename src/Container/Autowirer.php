@@ -63,6 +63,7 @@ class Autowirer {
      * @throws AutowiringException
      */
     public function autowireConstructor(string $className): object {
+        // TODO: Cache instantiability and argument list by $className to avoid reflection API overhead?
         try {
             $class = new ReflectionClass($className);
         } catch (ReflectionException $e) {
