@@ -13,8 +13,8 @@ use Psr\Container\ContainerInterface;
  * using put() can be retrieved with get(). The container automatically contains itself, under the
  * "Psr\Container\ContainerInterface" ID, this interfaces fully-qualified name and its own fully-qualified class name.
  *
- * This container support IDs that specify a non-built-in type, i.e. a class, interface or trait (including those
- * predefined in the PHP library).
+ * This container support IDs that specify a non-built-in type, i.e. a class or interface (including those predefined
+ * in the PHP library).
  *
  * For consistency reasons, once stored, objects cannot be removed or overwritten.
  *
@@ -35,7 +35,7 @@ interface ArrayContainer extends ContainerInterface, ArrayAccess {
      * same id will throw an exception.
      *
      * @template T of object
-     * @param class-string<T> $id A fully-qualified non-built-in type name, i.e. the name of a class, interface or trait
+     * @param class-string<T> $id A fully-qualified non-built-in type name, i.e. the name of a class or interface
      * @param T $implementation An object whose type extends, implements or uses the type specified by the id
      * @throws ContainerExceptionInterface If $id is not a non-built-in type or an entry for this $id already exists
      */

@@ -34,8 +34,7 @@ class StaticContainer implements ArrayContainer {
      * @throws ContainerExceptionInterface
      */
     protected static function checkSupportedId(string $id): void {
-
-        if (!(class_exists($id) || interface_exists($id) || trait_exists($id))) {
+        if (!(class_exists($id) || interface_exists($id))) {
             throw new ContainerException("Non-type id '$id' is not supported");
         }
     }
