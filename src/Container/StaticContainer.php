@@ -25,9 +25,9 @@ class StaticContainer implements ArrayContainer {
      * @throws ContainerExceptionInterface
      */
     public function __construct() {
-        $this->put(ContainerInterface::class, $this);
-        $this->put(ArrayContainer::class, $this);
-        $this->put(self::class, $this);
+        $this->set(ContainerInterface::class, $this);
+        $this->set(ArrayContainer::class, $this);
+        $this->set(self::class, $this);
     }
 
     /**
@@ -47,7 +47,7 @@ class StaticContainer implements ArrayContainer {
         return array_key_exists($id, $this->entries);
     }
 
-    public function put(string $id, object $implementation): void {
+    public function set(string $id, object $implementation): void {
         static::checkSupportedId($id);
 
         // Can not use has() here because it might be overridden to include additional object sources
@@ -83,7 +83,7 @@ class StaticContainer implements ArrayContainer {
             throw new InvalidArgumentException("Offset must be a string and value must be an object");
         }
 
-        $this->put($offset, $value);
+        $this->set($offset, $value);
     }
 
     public function offsetUnset(mixed $offset): void {

@@ -11,14 +11,14 @@ use Attribute;
  * construct an instance of the class. Likewise, specifying it on promoted properties has no effect. The class should
  * not depend on the order in which autowiring happens, except for the constructor being called first.
  *
- * This attribute only has an effect when the object is autowired through Autowirer::autowireObject(), e.g. when
- * obtaining an instance from an AutowiringContainer that is configured to autowire members.
+ * This attribute only has an effect when the object is autowired through Autowirer::autowire(), e.g. when obtaining an
+ * instance from an AutowiringContainer that is configured to autowire members.
  *
  * Class methods with this attribute will be called with their parameters autowired. Note that this can also be applied
  * to parameterless methods.
  *
  * @see Autowirer for semantics
- * @see Autowirer::autowireObject()
+ * @see Autowirer::autowire()
  * @see AutowiringContainer
  * @see Container::isAutowiringMembers()
  */
@@ -26,4 +26,5 @@ use Attribute;
 class Autowired {
     // TODO: Allow specifying on parameters so same semantics as for properties apply
     // TODO: Property to specify ID other than class FQN? In subtype of Autowired?
+    // TODO: make() attribute or subtype to force creation of fresh instance
 }

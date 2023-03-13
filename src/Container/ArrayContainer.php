@@ -11,7 +11,7 @@ use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * Extends PSR-11: Container Interface with ability to put objects into the Container. Objects that have been stored
- * using put() can be retrieved with get(). The container automatically contains itself, under the
+ * using set() can be retrieved with get(). The container automatically contains itself, under the
  * "Psr\Container\ContainerInterface" ID, this interfaces fully-qualified name and its own fully-qualified class name.
  *
  * This container support IDs that specify a non-built-in type, i.e. a class or interface (including those predefined
@@ -23,7 +23,7 @@ use Psr\Container\NotFoundExceptionInterface;
  *
  * ArrayAccess is implemented to allow accessing the container like an array with string keys.
  * ArrayAccess::offsetExists() maps to ContainerInterface::has(), ArrayAccess::offsetGet() to ContainerInterface::get(),
- * ArrayAccess::offsetSet() to ContainerInterface::put(), and ArrayAccess::offsetUnset() is not supported and throws an
+ * ArrayAccess::offsetSet() to ContainerInterface::set(), and ArrayAccess::offsetUnset() is not supported and throws an
  * Exception.
  *
  * @see https://www.php-fig.org/psr/psr-11/
@@ -33,10 +33,10 @@ use Psr\Container\NotFoundExceptionInterface;
  * @extends ArrayAccess<class-string, object>
  */
 interface ArrayContainer extends ContainerInterface, ArrayAccess {
-    // TODO: Support sealing, i.e. no more IDs may be registered/put after seal()? Require seal() before get()?
+    // TODO: Sealing, i.e. require seal() before get(), then no more put/register? Use Builder for Container?
     // TODO: Support non-class IDs as per PSR-11?
     /**
-     * Stores an object in the container. Overwriting previous entries is not allowed; i.e. a second put() call for the
+     * Stores an object in the container. Overwriting previous entries is not allowed; i.e. a second set() call for the
      * same id will throw an exception.
      *
      * @template T of object
@@ -44,7 +44,7 @@ interface ArrayContainer extends ContainerInterface, ArrayAccess {
      * @param T $implementation An object whose type extends or implements the type specified by the $id
      * @throws ContainerExceptionInterface If $id is not a non-built-in type or an entry for this $id already exists
      */
-    public function put(string $id, object $implementation): void;
+    public function set(string $id, object $implementation): void;
 
     /**
      * Not supported, always throws a LogicException.
