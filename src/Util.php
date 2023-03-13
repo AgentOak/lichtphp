@@ -5,7 +5,7 @@ namespace LichtPHP;
 
 use RuntimeException;
 
-class Util {
+final class Util {
     private function __construct() {
     }
 
