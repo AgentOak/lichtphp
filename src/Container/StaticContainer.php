@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace LichtPHP\Container;
 
 use InvalidArgumentException;
+use LichtPHP\Util;
 use LogicException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -34,12 +35,12 @@ class StaticContainer implements ArrayContainer {
      * @throws ContainerExceptionInterface
      */
     protected static function checkSupportedId(string $id): void {
-        if (!(class_exists($id) || interface_exists($id))) {
+        if (!Util::isClassType($id)) {
             throw new ContainerException("Non-class-type id '$id' is not supported");
         }
     }
 
-    public function get(string $id): mixed {
+    public function get(string $id): object {
         return $this->entries[$id] ?? throw new NotFoundException("No implementation for '$id'");
     }
 
@@ -67,7 +68,7 @@ class StaticContainer implements ArrayContainer {
     /**
      * @throws ContainerExceptionInterface
      */
-    public function offsetGet(mixed $offset): mixed {
+    public function offsetGet(mixed $offset): object {
         if (!is_string($offset)) {
             throw new InvalidArgumentException("Offset must be a string");
         }

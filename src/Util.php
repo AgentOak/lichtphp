@@ -3,8 +3,12 @@ declare(strict_types=1);
 
 namespace LichtPHP;
 
+use ReflectionClass;
 use RuntimeException;
 
+/**
+ * Provides convenient utility methods.
+ */
 final class Util {
     private function __construct() {
     }
@@ -23,5 +27,25 @@ final class Util {
         }
 
         return $condition;
+    }
+
+    /**
+     * Returns whether the given `$className` denotes an instantiable class, that is, is a class (not an interface), not
+     * abstract and has a public constructor.
+     *
+     * @param string $className A fully-qualified class name
+     */
+    public static function isInstantiableClass(string $className): bool {
+        return class_exists($className) && (new ReflectionClass($className))->isInstantiable();
+    }
+
+    /**
+     * Returns whether the given `$className` denotes a valid class type, i.e. a class or interface with the given name
+     * exists.
+     *
+     * @param string $className A fully-qualified type name
+     */
+    public static function isClassType(string $className): bool {
+        return class_exists($className) || interface_exists($className);
     }
 }

@@ -41,8 +41,8 @@ final class RedisCache extends AbstractCache {
         private readonly int $dbindex = 0,
         private readonly string $prefix = ""
     ) {
-        if (!class_exists(Redis::class)) {
-            throw new RuntimeException("PHP extension Redis not loaded");
+        if (!Util::isInstantiableClass(Redis::class)) {
+            throw new RuntimeException("Redis class not available (phpredis extension not loaded?)");
         }
 
         parent::__construct($clock);
