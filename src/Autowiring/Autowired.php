@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LichtPHP\Container;
+namespace LichtPHP\Autowiring;
 
 use Attribute;
 

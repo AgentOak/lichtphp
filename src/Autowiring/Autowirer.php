@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LichtPHP\Container;
+namespace LichtPHP\Autowiring;
 
 use Closure;
 use Exception;
@@ -28,7 +28,7 @@ use ReflectionProperty;
  *
  * An array of named arguments can be passed to the call() and instantiate() methods. The corresponding parameters will
  * be preferably supplied by the given arguments and bypass autowiring. This should only be used sparingly, e.g. when
- * necessary due to non-autowireable parameters or when obtaining different  Container::make().
+ * necessary due to non-autowireable parameters or when obtaining different instances from Container::make().
  *
  * Constructor and method parameters that are not typehinted with a class name, but have a default value, are ignored
  * and retain their default value. Otherwise, parameters MUST be typehinted with a class name, or an AutowiringException
