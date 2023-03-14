@@ -5,6 +5,7 @@ namespace LichtPHP\Autowiring;
 
 use Closure;
 use Exception;
+use LichtPHP\Util;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
@@ -75,7 +76,6 @@ class Autowirer {
         try {
             return $callable(...$this->resolveFunctionArgs($function, $arguments));
         } catch (Exception $e) {
-            // TODO: Print name of callable?
             throw new AutowiringException("Failed to call autowired callable", previous: $e);
         }
     }
@@ -96,20 +96,11 @@ class Autowirer {
      * @see Autowirer for semantics
      */
     public function instantiate(string $className, array $arguments = []): object {
-        // TODO: Cache instantiability and argument list by $className to avoid reflection API overhead?
-        // TODO: Handle anonymous classes?
-        try {
-            $class = new ReflectionClass($className);
-        } catch (ReflectionException $e) {
-            throw new AutowiringException("Failed to reflect Class", previous: $e);
+        if (!Util::isInstantiableClass($className)) {
+            throw new AutowiringException("Autowired class '$className' is not an instantiable class");
         }
 
-        // Also checks that the constructor is public
-        if (!$class->isInstantiable()) {
-            throw new AutowiringException("Autowired class '$className' is not instantiable");
-        }
-
-        $constructor = $class->getConstructor();
+        $constructor = (new ReflectionClass($className))->getConstructor();
         try {
             if ($constructor === null) {
                 if (count($arguments) !== 0) {
@@ -182,6 +173,7 @@ class Autowirer {
     protected function resolveFunctionArgs(ReflectionFunctionAbstract $function, array $providedArgs = []): array {
         $arguments = [];
 
+        // TODO: Cache parameter lists to avoid reflection API overhead?
         foreach ($function->getParameters() as $parameter) {
             if ($parameter->isPassedByReference() || $parameter->isVariadic()) {
                 throw new AutowiringException("Parameters passed by-reference and variadics are not allowed");
@@ -207,6 +199,7 @@ class Autowirer {
     }
 
     /**
+     * @param-out ?object $value
      * @return bool false if this variable should not be assigned, i.e. retain its default value, or true if it should
      *              be set to the value placed in the reference parameter $value
      * @throws AutowiringException
@@ -233,12 +226,14 @@ class Autowirer {
             throw new AutowiringException("Autowired variable '$name' has unsupported type hint");
         }
 
-        // TODO: 'self' type? Other special types? Should we class_ or interface_exists()?
-        if (!$type->isBuiltin() && $this->container->has($type->getName())) {
+        $typeName = $type->getName();
+
+        // isClassType() check also filters out special typehint 'self'
+        if (!$type->isBuiltin() && Util::isClassType($typeName) && $this->container->has($typeName)) {
             // This is a class typehint that we can supply; not having it might be OK,
             // but failing to construct it when we do have it should fail
             try {
-                $value = $this->container->get($type->getName());
+                $value = $this->container->get($typeName);
                 return true;
             } catch (ContainerExceptionInterface $e) {
                 throw new AutowiringException("Failed wiring variable '$name'", previous: $e);
@@ -257,10 +252,12 @@ class Autowirer {
         // Dependency is required
         if ($type->isBuiltin()) {
             throw new AutowiringException("Autowired variable '$name' is not autowireable, but required");
-        } else {
+        } elseif (Util::isClassType($typeName)) {
             throw new AutowiringException(
                 "Autowired variable '$name' dependency is unsatisfied, but required (no default and not nullable)"
             );
+        } else {
+            throw new AutowiringException("Autowired variable '$name' requires non-existent class {$typeName}");
         }
     }
 }
