@@ -46,7 +46,8 @@ class StaticContainer implements ArrayContainer {
         } elseif (!Util::isClassType($id)) {
             throw new ContainerException("ID '$id' is not a valid class type");
         } elseif (!($implementation instanceof $id)) {
-            throw new ContainerException("Object of type '{$implementation::class}' is not an instance of ID '$id'");
+            $implementationClass = $implementation::class;
+            throw new ContainerException("Object of type '{$implementationClass}' is not an instance of ID '$id'");
         }
 
         $this->entries[$id] = $implementation;
