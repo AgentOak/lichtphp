@@ -10,7 +10,7 @@ use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 
 /**
- * Base class for implementations of PSR-16: Simple cache and Cache.
+ * Base class for implementations of PSR-16: Simple cache and `Cache`.
  *
  * @see CacheInterface
  * @see Cache
@@ -19,6 +19,7 @@ abstract class AbstractCache implements Cache {
     // TODO: Add support for layering?
     // TODO: Add support for partitioning?
     // TODO: Add APCu cache implementation
+    // TODO: Add memory cache implementation (glorified memoization?)
     // TODO: Add PDO/SQL cache implementation?
     // TODO: Add file cache implementation?
     /**
@@ -27,7 +28,7 @@ abstract class AbstractCache implements Cache {
     protected const KEY_REGEX = "/[a-zA-Z\d_.]{1,64}/";
 
     /**
-     * @param ClockInterface $clock Clock to obtain a reference time from when converting DateIntervals to seconds
+     * @param ClockInterface $clock Clock to obtain a reference time from when converting `DateInterval`s to seconds
      */
     protected function __construct(protected readonly ClockInterface $clock) {
     }

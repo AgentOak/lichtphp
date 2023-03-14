@@ -10,7 +10,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 
 /**
- * Minimal implementation of PSR-11: Container Interface and ArrayContainer that stores and retrieves objects by a
+ * Minimal implementation of PSR-11: Container Interface and `ArrayContainer` that stores and retrieves objects by a
  * non-built-in type ID.
  *
  * @see ContainerInterface

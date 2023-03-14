@@ -7,6 +7,11 @@ use DomainException;
 use LengthException;
 use LogicException;
 
+/**
+ * Implementation of `Configuration` for INI files.
+ *
+ * @see Configuration
+ */
 class INIConfiguration implements Configuration {
     /**
      * @param array<string, string|array<string, string>> $options
@@ -101,14 +106,14 @@ class INIConfiguration implements Configuration {
     }
 
     /**
-     * Loads and parses the given ini file into a Configuration object.
+     * Loads and parses the given ini file into a `Configuration` object.
      *
-     * @param non-empty-string $filename the ini file to load
-     * @return Configuration representing the ini file.
-     *
-     * @throws ConfigurationException when the given file could not be parsed as ini.
+     * @param non-empty-string $filename The ini file to load
+     * @return Configuration Representing the ini file
+     * @throws ConfigurationException When the given file could not be parsed as ini
      */
     public static function fromFile(string $filename): Configuration {
+        // TODO: Use INI_SCANNER_TYPED?
         $options = parse_ini_file($filename, process_sections: true);
         if ($options === false) {
             throw new ConfigurationException("Parsing configuration file '$filename' failed");

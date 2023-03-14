@@ -11,19 +11,19 @@ use Throwable;
  */
 class UserException extends RuntimeException {
     /**
-     * @var int<400, 599> Default is 400 (Bad Request).
+     * @var int<400, 599> Default is 400 (Bad Request)
      */
     private const DEFAULT_HTTP_CODE = 400;
 
     /**
-     * @var int<1, 254> Default is 1.
+     * @var int<1, 254> Default is 1
      */
     private const DEFAULT_EXIT_CODE = 1;
 
     /**
-     * @param non-empty-string $message
-     * @param int<400, 599> $httpCode HTTP response code when handling this exception in a web context.
-     * @param int<1, 254> $exitCode Exit code when handling this exception in a CLI context.
+     * @param non-empty-string $message A message that will be shown to users
+     * @param int<400, 599> $httpCode HTTP response code when handling this exception in a web context
+     * @param int<1, 254> $exitCode Exit code when handling this exception in a CLI context
      */
     public function __construct(
         string $message,

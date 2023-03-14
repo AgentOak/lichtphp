@@ -14,7 +14,7 @@ final class ErrorHandling {
     private const NON_FATAL_ERRORS = E_STRICT | E_DEPRECATED | E_USER_DEPRECATED | E_USER_NOTICE | E_USER_WARNING;
 
     /**
-     * @var array<int, ErrorHandling>
+     * @var list<ErrorHandling>
      */
     private static array $errorHandling = [];
 

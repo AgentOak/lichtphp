@@ -6,7 +6,7 @@ namespace LichtPHP\Autowiring;
 use Exception;
 
 /**
- * Thrown when autowiring fails.
+ * Thrown by `Autowirer` when autowiring fails.
  *
  * @see Autowirer
  * @see Autowired

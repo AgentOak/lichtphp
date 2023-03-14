@@ -7,9 +7,9 @@ use DateInterval;
 use Psr\SimpleCache\CacheInterface;
 
 /**
- * Implementation of PSR-16: Simple cache and Cache, that only validates keys as required by PSR-16, but does not store
- * any elements. get() will always return the default, has() will always return false, delete(), set() and clear() are
- * no-ops that return successfully.
+ * Implementation of PSR-16: Simple cache and `Cache`, that only validates keys as required by PSR-16, but does not
+ * store any elements. `get()` will always return the default, `has()` will always return `false`, `delete()`, `set()`
+ * and `clear()` are no-ops that return successfully.
  *
  * @see CacheInterface
  * @see Cache

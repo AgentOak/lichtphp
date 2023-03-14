@@ -22,26 +22,27 @@ use ReflectionProperty;
  * by reading parameter and property typehints from the PHP reflection API and using the type name as an ID to fetch
  * from the ContainerInterface.
  *
- * Callables (call()), constructors (instantiate()) and objects methods and properties with the Autowired attribute
- * (autowire()) are supported. Callables and methods (including the constructor) will be called with their parameters
- * autowired. By-reference and variadic parameters are not supported and will throw an AutowiringException whenever they
- * are encountered.
+ * Callables (`call()`), constructors (`instantiate()`) and objects methods and properties with the Autowired attribute
+ * (`autowire()`) are supported. Callables and methods (including the constructor) will be called with their parameters
+ * autowired. By-reference and variadic parameters are not supported and will throw an `AutowiringException` whenever
+ * they are encountered.
  *
- * An array of named arguments can be passed to the call() and instantiate() methods. The corresponding parameters will
- * be preferably supplied by the given arguments and bypass autowiring. This should only be used sparingly, e.g. when
- * necessary due to non-autowireable parameters or when obtaining different instances from Container::make().
+ * An array of named arguments can be passed to the `call()` and `instantiate()` methods. The corresponding parameters
+ * will be supplied preferably by the given arguments and bypass autowiring. This should only be used sparingly, e.g.
+ * when necessary due to non-autowireable parameters or when obtaining different instances from `Container::make()`.
  *
  * Constructor and method parameters that are not typehinted with a class name, but have a default value, are ignored
- * and retain their default value. Otherwise, parameters MUST be typehinted with a class name, or an AutowiringException
- * will be thrown. Properties with the Autowired attribute MUST always be typehinted with a class name, otherwise an
- * AutowiringException will be thrown. Union and intersection types are not supported and will throw an
- * AutowiringException when they are about to be autowired, unless they are supplied from provided arguments.
+ * and retain their default value. Otherwise, parameters MUST be typehinted with a class name, or an
+ * `AutowiringException` will be thrown. Properties with the `Autowired` attribute MUST always be typehinted with a
+ * class name, otherwise an `AutowiringException` will be thrown. Union and intersection types are not supported and
+ * will throw an `AutowiringException` when they are about to be autowired, unless they are supplied from provided
+ * arguments.
  *
  * Specifying a default value for a parameter or property makes an optional dependency; the Autowirer will try to
  * resolve the dependency but if it is not available, it will use the default value. Additionally, nullable types may
- * also be used to specify an optional dependency; if the Autowirer cannot resolve the dependency, it will assign null.
- * Default values have precedence over null. If neither the type is nullable, nor a default value is given, the
- * dependency is required and an AutowiringException will be thrown if it cannot be satisfied.
+ * also be used to specify an optional dependency; if the Autowirer cannot resolve the dependency, it will assign
+ * `null`. Default values have precedence over `null`. If neither the type is nullable, nor a default value is given,
+ * the dependency is required and an `AutowiringException` will be thrown if it cannot be satisfied.
  *
  * @see ContainerInterface
  * @see Autowired
@@ -56,13 +57,13 @@ class Autowirer {
 
     /**
      * Autowire parameters of a callable (if any) and call it, returning its return value. By-reference and variadic
-     * parameters are not allowed and will throw an Exception.
+     * parameters are not allowed and will throw an exception.
      *
      * @template T of mixed
      * @param callable(mixed...): T $callable A callable
      * @param array<string, mixed> $arguments Named arguments to pass to the callable. Only the remaining parameters
      *                                        will be autowired. Unused arguments are considered an error
-     * @return T The return value of the given $callable, or NULL for a void function
+     * @return T The return value of the given `$callable`, or `null` for a void function
      * @throws AutowiringException If autowiring failed, e.g. a required dependency is unavailable
      * @see Autowirer for semantics
      */
@@ -81,16 +82,16 @@ class Autowirer {
     }
 
     /**
-     * Autowire parameters of a constructor (if any) and create a new instance. The given $className must be
+     * Autowire parameters of a constructor (if any) and create a new instance. The given `$className` must be
      * instantiable, that is, it must be a class, not abstract, and have a public constructor.
      *
-     * If autowiring of methods and properties is required, call Autowirer::autowire() with the returned object.
+     * If autowiring of methods and properties is required, call `autowire()` with the returned object.
      *
      * @template T of object
      * @param class-string<T> $className Fully-qualified name of an instantiable class
      * @param array<string, mixed> $arguments Named arguments to pass to the constructor. Only the remaining
      *                                        parameters will be autowired. Unused arguments are considered an error
-     * @return T An instance of the given $className
+     * @return T An instance of the given `$className`
      * @throws AutowiringException If autowiring failed, e.g. a required dependency is unavailable
      * @see Autowirer::autowire()
      * @see Autowirer for semantics
@@ -119,7 +120,7 @@ class Autowirer {
     }
 
     /**
-     * Autowire methods and properties of an object that have the Autowired attribute.
+     * Autowire methods and properties of an object that have the `Autowired` attribute.
      *
      * @throws AutowiringException
      * @see Autowired for semantics
@@ -200,8 +201,8 @@ class Autowirer {
 
     /**
      * @param-out ?object $value
-     * @return bool false if this variable should not be assigned, i.e. retain its default value, or true if it should
-     *              be set to the value placed in the reference parameter $value
+     * @return bool `false` if this variable should not be assigned, i.e. retain its default value, or `true` if it
+     *              should be set to the value placed in the reference parameter `$value`
      * @throws AutowiringException
      */
     protected function resolveVariable(

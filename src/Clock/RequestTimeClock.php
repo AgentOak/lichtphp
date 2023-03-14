@@ -8,13 +8,13 @@ use LichtPHP\Util;
 use RuntimeException;
 
 /**
- * Implementation of PSR-20: Clock based on $_SERVER request time. For CLI this contains the script start time.
+ * Implementation of PSR-20: Clock based on `$_SERVER` request time. For CLI this contains the script start time.
  *
  * @see FrozenClock
  */
 final class RequestTimeClock extends FrozenClock {
     /**
-     * @throws RuntimeException When creating DateTimeImmutable object failed
+     * @throws RuntimeException When request time is unavailable or could not be parsed
      */
     public function __construct() {
         if (!array_key_exists("REQUEST_TIME_FLOAT", $_SERVER)) {

@@ -7,7 +7,7 @@ use DateTimeImmutable;
 use Psr\Clock\ClockInterface;
 
 /**
- * Implementation of PSR-20: Clock returning the current real time clock as of the now() call.
+ * Implementation of PSR-20: Clock returning the current real time clock as of the `now()` call.
  *
  * @see https://www.php-fig.org/psr/psr-20/
  * @see https://www.php-fig.org/psr/psr-20/meta/

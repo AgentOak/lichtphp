@@ -17,6 +17,13 @@ use Psr\Container\NotFoundExceptionInterface;
  * Entries registered with `link()` or `factory()` are lazy-loaded: they will only be created when they are obtained
  * from `get()` for the first time.
  *
+ * This container support IDs that specify a non-built-in type, i.e. a class or interface (including those predefined
+ * in the PHP library). The validity of IDs is only checked when adding or registering elements into the container to be
+ * compliant with PSR-11. Naturally, it follows that for invalid IDs, `has()` can only ever return `false`, and `get()`
+ * and `make()` can only throw a `NotFoundExceptionInterface`.
+ *
+ * For consistency reasons, once stored, objects and registrations cannot be removed or overwritten.
+ *
  * @see https://www.php-fig.org/psr/psr-11/
  * @see https://www.php-fig.org/psr/psr-11/meta/
  * @see ContainerInterface

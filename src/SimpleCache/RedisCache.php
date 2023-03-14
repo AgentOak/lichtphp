@@ -12,10 +12,11 @@ use RedisException;
 use RuntimeException;
 
 /**
- * Implementation of PSR-16: Simple cache and Cache, using a Redis server as backend. Requires phpredis extension.
+ * Implementation of PSR-16: Simple cache and `Cache`, using a Redis server as backend. Requires phpredis extension.
  *
  * @see CacheInterface
  * @see Cache
+ * @see Redis
  */
 final class RedisCache extends AbstractCache {
     /**
@@ -26,7 +27,7 @@ final class RedisCache extends AbstractCache {
     private readonly Redis $redis;
 
     /**
-     * @param string $prefix Prefix for all cache keys.
+     * @param string $prefix Prefix for all cache keys
      * @throws CacheException If connection failed
      * @throws RuntimeException If Redis extension is not available
      * @see Redis::pconnect()
