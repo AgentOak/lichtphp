@@ -35,6 +35,8 @@ use Psr\Container\NotFoundExceptionInterface;
 interface ArrayContainer extends ContainerInterface, ArrayAccess {
     // TODO: Sealing, i.e. require seal() before get(), then no more put/register? Use Builder for Container?
     // TODO: Support non-class IDs as per PSR-11?
+    // TODO: Support non-object values?
+    // TODO: Method to list/debug entries
     /**
      * Stores an object in the container. Overwriting previous entries is not allowed; i.e. a second set() call for the
      * same id will throw an exception.

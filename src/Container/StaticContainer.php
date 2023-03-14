@@ -31,17 +31,8 @@ class StaticContainer implements ArrayContainer {
         $this->set(self::class, $this);
     }
 
-    /**
-     * @throws ContainerExceptionInterface
-     */
-    protected static function checkSupportedId(string $id): void {
-        if (!Util::isClassType($id)) {
-            throw new ContainerException("Non-class-type id '$id' is not supported");
-        }
-    }
-
     public function get(string $id): object {
-        return $this->entries[$id] ?? throw new NotFoundException("No implementation for '$id'");
+        return $this->entries[$id] ?? throw new NotFoundException("No implementation for ID '$id'");
     }
 
     public function has(string $id): bool {
@@ -49,13 +40,13 @@ class StaticContainer implements ArrayContainer {
     }
 
     public function set(string $id, object $implementation): void {
-        static::checkSupportedId($id);
-
         // Can not use has() here because it might be overridden to include additional object sources
         if (array_key_exists($id, $this->entries)) {
-            throw new ContainerException("Duplicate implementation for '$id' not supported");
+            throw new ContainerException("Duplicate implementation for ID '$id' not supported");
+        } elseif (!Util::isClassType($id)) {
+            throw new ContainerException("ID '$id' is not a valid class type");
         } elseif (!($implementation instanceof $id)) {
-            throw new ContainerException("Implementation for '$id' does not implement this type");
+            throw new ContainerException("Object of type '{$implementation::class}' is not an instance of ID '$id'");
         }
 
         $this->entries[$id] = $implementation;
