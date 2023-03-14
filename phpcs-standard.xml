@@ -23,23 +23,29 @@
 
     <!-- Stylistic choices -->
     <rule ref="Generic">
+        <!-- Short array syntax should always be used -->
         <exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
         <!-- Unavoidable when implementing interfaces -->
         <exclude name="Generic.CodeAnalysis.UnusedFunctionParameter"/>
         <exclude name="Generic.Commenting.DocComment"/>
         <exclude name="Generic.Commenting.Todo"/>
+        <!-- There should be a final newline -->
         <exclude name="Generic.Files.EndFileNoNewline"/>
         <!-- Doesn't work with Windows filesystems, PHP files in bin/ may be executable -->
         <exclude name="Generic.Files.ExecutableFile"/>
+        <!-- Filesnames should match class name capitalization -->
         <exclude name="Generic.Files.LowercasedFilename"/>
         <exclude name="Generic.Formatting.MultipleStatementAlignment"/>
         <exclude name="Generic.Formatting.NoSpaceAfterCast"/>
         <exclude name="Generic.Formatting.SpaceAfterNot"/>
         <exclude name="Generic.Formatting.SpaceBeforeCast"/>
         <exclude name="Generic.Functions.OpeningFunctionBraceBsdAllman"/>
+        <exclude name="Generic.NamingConventions.AbstractClassNamePrefix"/>
         <exclude name="Generic.NamingConventions.CamelCapsFunctionName"/>
         <exclude name="Generic.NamingConventions.InterfaceNameSuffix"/>
+        <!-- No closing PHP tag at the end of php files -->
         <exclude name="Generic.PHP.ClosingPHPTag"/>
+        <!-- true, false and null should be lowercased -->
         <exclude name="Generic.PHP.UpperCaseConstant"/>
         <exclude name="Generic.WhiteSpace.DisallowSpaceIndent"/>
     </rule>
@@ -97,9 +103,6 @@
                 <element key="get_defined_constants" value="null"/>
                 <element key="get_defined_functions" value="null"/>
                 <element key="get_defined_vars" value="null"/>
-                <!-- Use instanceof instead -->
-                <element key="is_a" value="null"/>
-                <element key="is_subclass_of" value="null"/>
                 <!-- Use $callable() syntax instead -->
                 <element key="call_user_func_array" value="null"/>
                 <element key="call_user_func" value="null"/>
