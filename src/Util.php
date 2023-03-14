@@ -17,8 +17,10 @@ final class Util {
      * Throws an exception if the given parameter is false, otherwise returns it as-is. Can be used to check return
      * values of functions that return a specific value on error instead of throwing an exception.
      *
-     * @param mixed $condition The value to check
+     * @template T of mixed
+     * @param T $condition The value to check
      * @param mixed $error The value that signals an error, false by default
+     * @return T
      * @throws RuntimeException If the given value is the error value
      */
     public static function ensure(mixed $condition, mixed $error = false): mixed {
@@ -65,6 +67,7 @@ final class Util {
      * unless the class is about to be used anyway.
      *
      * @param string $className A fully-qualified class name
+     * @phpstan-assert-if-true class-string $className
      */
     public static function isInstantiableClass(string $className): bool {
         if (array_key_exists($className, self::$instantiabilityCache)) {
@@ -77,11 +80,6 @@ final class Util {
     }
 
     /**
-     * @var array<string, bool>
-     */
-    private static array $classTypeCache = [];
-
-    /**
      * Returns whether the given `$className` denotes a valid class type, i.e. a class or interface with the given name
      * exists.
      *
@@ -89,14 +87,9 @@ final class Util {
      * unless the type is about to be used anyway.
      *
      * @param string $className A fully-qualified type name
+     * @phpstan-assert-if-true class-string $className
      */
     public static function isClassType(string $className): bool {
-        if (array_key_exists($className, self::$classTypeCache)) {
-            return self::$classTypeCache[$className];
-        }
-
-        $result = class_exists($className) || interface_exists($className);
-        self::$classTypeCache[$className] = $result;
-        return $result;
+        return class_exists($className) || interface_exists($className);
     }
 }
