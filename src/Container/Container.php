@@ -81,10 +81,10 @@ interface Container extends ArrayContainer {
     public function make(string $id, array $arguments = []): object;
 
     /**
-     * Register a class name to provide the given `$ids`. The class will be instantiated when an entry with a
-     * corresponding ID is obtained from the container with `get()`. All `$ids` will share the same instance of the
-     * given class when obtained with `get()`. The created instance object will have its methods and properties
-     * autowired if the Container is configured to autowire members.
+     * Register a class name to provide the given `$ids`. The class will be instantiated, autowiring the constrcutor,
+     * when an entry with a corresponding ID is obtained from the container with `get()`. All `$ids` will share the same
+     * instance of the given class when obtained with `get()`. The created instance object will have its methods and
+     * properties autowired if the Container is configured to autowire members.
      *
      * The class may be instantiated again when needed to produce a new instance for `make()`.
      *
@@ -94,9 +94,9 @@ interface Container extends ArrayContainer {
      *                                given `$ids`
      * @param array<string, mixed> $arguments Named arguments to pass to the constructor. Only the remaining parameters
      *                                        will be autowired. Unused arguments are considered an error
-     * @throws ContainerExceptionInterface If one of the `$ids` is not a non-built-in type, an entry for one of the
-     *                                     `$ids` already exists, the class does not exist or does not implement/extend
-     *                                     all of the `$ids`
+     * @throws ContainerConfigurationException If one of the `$ids` is not a non-built-in type, an entry for one of the
+     *                                         `$ids` already exists, the class does not exist or does not implement or
+     *                                         extend all of the `$ids`
      * @see ContainerInterface::get()
      * @see Container::make()
      * @see Autowirer::instantiate()
@@ -104,10 +104,11 @@ interface Container extends ArrayContainer {
     public function link(string|array $ids, string $className, array $arguments = []): void;
 
     /**
-     * Register a factory method to produce an implementation of the given `$ids`. It will be called when an entry with
-     * a corresponding ID is obtained from the container with `get()`. The factory method will only be called once, and
-     * all `$ids` will share the produced instance when obtained with `get()`. The returned instance object will have
-     * its methods and properties autowired if the Container is configured to autowire members.
+     * Register a factory method to produce an implementation of the given `$ids`. It will be called with its parameters
+     * autowired when an entry with a corresponding ID is obtained from the container with `get()`. The factory method
+     * will only be called once, and all `$ids` will share the produced instance when obtained with `get()`. The
+     * returned instance object will have its methods and properties autowired if the Container is configured to
+     * autowire members.
      *
      * The factory method may be called again when needed to produce a new instance for `make()`, therefore it has to
      * create a new instance every time it is called.
@@ -118,8 +119,8 @@ interface Container extends ArrayContainer {
      *                                            extends all given `$ids`
      * @param array<string, mixed> $arguments Named arguments to pass to the callable. Only the remaining parameters
      *                                        will be autowired. Unused arguments are considered an error
-     * @throws ContainerExceptionInterface If one of the `$ids` is not a non-built-in type or an entry for one of the
-     *                                     `$ids` already exists
+     * @throws ContainerConfigurationException If one of the `$ids` is not a non-built-in type or an entry for one of
+     *                                         the `$ids` already exists
      * @see ContainerInterface::get()
      * @see Container::make()
      * @see Autowirer::call()

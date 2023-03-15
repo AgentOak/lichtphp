@@ -9,7 +9,6 @@ use LichtPHP\Container\Plan\ClassPlan;
 use LichtPHP\Container\Plan\ClosurePlan;
 use LichtPHP\Container\Plan\Plan;
 use LichtPHP\Util;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -32,7 +31,7 @@ class AutowiringContainer extends StaticContainer implements Container {
      *                                   a class was registered implicitly, it cannot be overwritten anymore.
      * @param bool $autowireMembers Whether to autowire methods and properties of created objects, see
      *                              `isAutowiringMembers()`
-     * @throws ContainerExceptionInterface
+     * @throws ContainerConfigurationException
      * @see Container::isAutowiringMembers()
      */
     public function __construct(
@@ -90,13 +89,13 @@ class AutowiringContainer extends StaticContainer implements Container {
     }
 
     /**
-     * @throws ContainerExceptionInterface
+     * @throws ContainerConfigurationException
      */
     protected function register(Plan $plan): void {
         // Check all IDs first so we do not leave the container in a semi-broken state
         foreach ($plan->ids as $id) {
             if (array_key_exists($id, $this->plans)) {
-                throw new ContainerException("Duplicate registration for '$id' not supported");
+                throw new ContainerConfigurationException("Duplicate registration for '$id' not supported");
             }
         }
 

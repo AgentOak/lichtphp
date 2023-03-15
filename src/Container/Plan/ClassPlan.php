@@ -5,17 +5,17 @@ namespace LichtPHP\Container\Plan;
 
 use LichtPHP\Autowiring\Autowirer;
 use LichtPHP\Autowiring\AutowiringException;
+use LichtPHP\Container\ConstructionException;
 use LichtPHP\Container\Container;
-use LichtPHP\Container\ContainerException;
+use LichtPHP\Container\ContainerConfigurationException;
 use LichtPHP\Util;
-use Psr\Container\ContainerExceptionInterface;
 
 class ClassPlan extends Plan {
     /**
      * @param non-empty-list<class-string> $ids
      * @param array<string, mixed> $arguments
      * @param class-string $className
-     * @throws ContainerExceptionInterface
+     * @throws ContainerConfigurationException
      */
     public function __construct(
         array $ids,
@@ -26,12 +26,12 @@ class ClassPlan extends Plan {
 
         // TODO: Postpone these checks to avoid triggering autoloader needlessly?
         if (!Util::isInstantiableClass($className)) {
-            throw new ContainerException("Class '$className' is not instantiable");
+            throw new ContainerConfigurationException("Class '$className' is not instantiable");
         }
 
         foreach ($ids as $id) {
             if (!is_a($className, $id, true)) {
-                throw new ContainerException("Class '$className' is not a subtype of specified ID '$id'");
+                throw new ContainerConfigurationException("Class '$className' is not a subtype of specified ID '$id'");
             }
         }
     }
@@ -40,7 +40,7 @@ class ClassPlan extends Plan {
         try {
             return $container->get(Autowirer::class)->instantiate($this->className, $arguments);
         } catch (AutowiringException $e) {
-            throw new ContainerException(
+            throw new ConstructionException(
                 "Failed to instantiate '{$this->className}' for IDs {$this->asUnionType()}",
                 previous: $e
             );

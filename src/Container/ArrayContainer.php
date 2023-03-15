@@ -5,7 +5,6 @@ namespace LichtPHP\Container;
 
 use ArrayAccess;
 use LogicException;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
@@ -44,7 +43,8 @@ interface ArrayContainer extends ContainerInterface, ArrayAccess {
      * @template T of object
      * @param class-string<T> $id A fully-qualified non-built-in type name, i.e. the name of a class or interface
      * @param T $implementation An object whose type extends or implements the type specified by the `$id`
-     * @throws ContainerExceptionInterface If `$id` is not a non-built-in type or an entry for this `$id` already exists
+     * @throws ContainerConfigurationException If `$id` is not a non-built-in type or an entry for this `$id` already
+     *                                         exists
      */
     public function set(string $id, object $implementation): void;
 

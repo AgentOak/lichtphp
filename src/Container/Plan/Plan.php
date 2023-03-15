@@ -5,8 +5,10 @@ namespace LichtPHP\Container\Plan;
 
 use LichtPHP\Autowiring\Autowirer;
 use LichtPHP\Autowiring\AutowiringException;
+use LichtPHP\Container\ConstructionException;
 use LichtPHP\Container\Container;
-use LichtPHP\Container\ContainerException;
+use LichtPHP\Container\ContainerConfigurationException;
+use LichtPHP\Container\CyclicDependencyException;
 use LichtPHP\Util;
 use Psr\Container\ContainerExceptionInterface;
 
@@ -16,20 +18,20 @@ abstract class Plan {
     /**
      * @param non-empty-list<class-string> $ids
      * @param array<string, mixed> $arguments
-     * @throws ContainerExceptionInterface
+     * @throws ContainerConfigurationException
      */
     public function __construct(
         public readonly array $ids,
         private readonly array $arguments = []
     ) {
         if (count($ids) === 0) {
-            throw new ContainerException("IDs may not be empty");
+            throw new ContainerConfigurationException("IDs may not be empty");
         }
 
         // TODO: Should this check be postponed to avoid triggering autoloader needlessly?
         foreach ($ids as $id) {
             if (!Util::isClassType($id)) {
-                throw new ContainerException("ID '$id' is not a valid class type");
+                throw new ContainerConfigurationException("ID '$id' is not a valid class type");
             }
         }
     }
@@ -44,7 +46,9 @@ abstract class Plan {
      */
     final public function execute(Container $container, array $arguments = []): object {
         if ($this->running === true) {
-            throw new ContainerException("Cyclic dependency detected, IDs '{$this->asUnionType()}' requires itself");
+            throw new CyclicDependencyException(
+                "Cyclic dependency detected, IDs '{$this->asUnionType()}' requires itself"
+            );
         }
 
         $this->running = true;
@@ -55,7 +59,7 @@ abstract class Plan {
             }
             return $object;
         } catch (AutowiringException $e) {
-            throw new ContainerException("Failed autowiring object for IDs {$this->asUnionType()}", previous: $e);
+            throw new ConstructionException("Failed autowiring object for IDs {$this->asUnionType()}", previous: $e);
         } finally {
             $this->running = false;
         }

@@ -23,7 +23,7 @@ class StaticContainer implements ArrayContainer {
     protected array $entries = [];
 
     /**
-     * @throws ContainerExceptionInterface
+     * @throws ContainerConfigurationException
      */
     public function __construct() {
         $this->set(ContainerInterface::class, $this);
@@ -42,12 +42,14 @@ class StaticContainer implements ArrayContainer {
     public function set(string $id, object $implementation): void {
         // Can not use has() here because it might be overridden to include additional object sources
         if (array_key_exists($id, $this->entries)) {
-            throw new ContainerException("Duplicate implementation for ID '$id' not supported");
+            throw new ContainerConfigurationException("Duplicate implementation for ID '$id' not supported");
         } elseif (!Util::isClassType($id)) {
-            throw new ContainerException("ID '$id' is not a valid class type");
+            throw new ContainerConfigurationException("ID '$id' is not a valid class type");
         } elseif (!($implementation instanceof $id)) {
             $implementationClass = $implementation::class;
-            throw new ContainerException("Object of type '{$implementationClass}' is not an instance of ID '$id'");
+            throw new ContainerConfigurationException(
+                "Object of type '{$implementationClass}' is not an instance of ID '$id'"
+            );
         }
 
         $this->entries[$id] = $implementation;
