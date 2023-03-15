@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace LichtPHP\Container\Plan;
 
+use LichtPHP\Autowiring\Autowirer;
+use LichtPHP\Autowiring\AutowiringException;
+use LichtPHP\Container\Container;
 use LichtPHP\Container\ContainerException;
 use LichtPHP\Util;
 use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\ContainerInterface;
 
 abstract class Plan {
     private bool $running = false;
@@ -40,14 +42,20 @@ abstract class Plan {
      * @param array<string, mixed> $arguments
      * @throws ContainerExceptionInterface
      */
-    final public function execute(ContainerInterface $container, array $arguments = []): object {
+    final public function execute(Container $container, array $arguments = []): object {
         if ($this->running === true) {
             throw new ContainerException("Cyclic dependency detected, IDs '{$this->asUnionType()}' requires itself");
         }
 
         $this->running = true;
         try {
-            return $this->produce($container, array_merge($this->arguments, $arguments));
+            $object = $this->produce($container, array_merge($this->arguments, $arguments));
+            if ($container->isAutowiringMembers()) {
+                $container->get(Autowirer::class)->autowire($object);
+            }
+            return $object;
+        } catch (AutowiringException $e) {
+            throw new ContainerException("Failed autowiring object for IDs {$this->asUnionType()}", previous: $e);
         } finally {
             $this->running = false;
         }
@@ -57,5 +65,5 @@ abstract class Plan {
      * @param array<string, mixed> $arguments
      * @throws ContainerExceptionInterface
      */
-    abstract protected function produce(ContainerInterface $container, array $arguments): object;
+    abstract protected function produce(Container $container, array $arguments): object;
 }

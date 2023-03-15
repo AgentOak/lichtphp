@@ -6,9 +6,9 @@ namespace LichtPHP\Container\Plan;
 use Closure;
 use LichtPHP\Autowiring\Autowirer;
 use LichtPHP\Autowiring\AutowiringException;
+use LichtPHP\Container\Container;
 use LichtPHP\Container\ContainerException;
 use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\ContainerInterface;
 
 class ClosurePlan extends Plan {
     /**
@@ -26,7 +26,7 @@ class ClosurePlan extends Plan {
         // TODO: Throw if Closure has a return type hint that is incompatible?
     }
 
-    protected function produce(ContainerInterface $container, array $arguments): object {
+    protected function produce(Container $container, array $arguments): object {
         try {
             $result = $container->get(Autowirer::class)->call($this->closure, $arguments);
         } catch (AutowiringException $e) {

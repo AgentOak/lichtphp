@@ -5,10 +5,10 @@ namespace LichtPHP\Container\Plan;
 
 use LichtPHP\Autowiring\Autowirer;
 use LichtPHP\Autowiring\AutowiringException;
+use LichtPHP\Container\Container;
 use LichtPHP\Container\ContainerException;
 use LichtPHP\Util;
 use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\ContainerInterface;
 
 class ClassPlan extends Plan {
     /**
@@ -36,7 +36,7 @@ class ClassPlan extends Plan {
         }
     }
 
-    protected function produce(ContainerInterface $container, array $arguments): object {
+    protected function produce(Container $container, array $arguments): object {
         try {
             return $container->get(Autowirer::class)->instantiate($this->className, $arguments);
         } catch (AutowiringException $e) {
