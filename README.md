@@ -5,8 +5,8 @@ Features PSR-11 dependency injection with autowiring.
 
 ### Usage
 
-Applications utilizing this library should follow the (PHP-PDS directory
-structure)[https://github.com/php-pds/skeleton].
+Applications utilizing this library should follow the [PHP-PDS directory
+structure](https://github.com/php-pds/skeleton).
 
 ### Development
 
