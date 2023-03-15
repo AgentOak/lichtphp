@@ -14,9 +14,13 @@ First, install development dependencies through composer:
 
 - `composer install --dev`
 
-Run static analysis tools using:
+Run static analysis:
 
 - `composer analyze`
+
+Run tests:
+
+- `composer test`
 
 ### Feature table
 

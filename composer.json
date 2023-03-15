@@ -18,6 +18,11 @@
             "LichtPHP\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "LichtPHP\\Tests\\": "tests/unit/"
+        }
+    },
     "require": {
         "php": "^8.1",
         "psr/clock": "^1.0",
@@ -39,15 +44,17 @@
         "phpstan/phpstan-strict-rules": "^1.5",
         "squizlabs/php_codesniffer": "^3.7",
         "vimeo/psalm": "^5.8",
-        "phpmd/phpmd": "^2.13"
+        "phpmd/phpmd": "^2.13",
+        "phpunit/phpunit": "^10.0"
     },
     "scripts": {
         "analyze": [
             "phpcs --standard=phpcs-standard.xml --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 --colors src/",
-            "phpstan analyse --ansi --no-progress; exit 0",
-            "psalm --threads=1 --show-info=true --no-progress --no-cache; exit 0",
-            "psalm --threads=1 --show-info=true --no-progress --no-cache --taint-analysis; exit 0",
+            "phpstan analyse --ansi; exit 0",
+            "psalm --threads=1 --show-info=true; exit 0",
+            "psalm --threads=1 --show-info=true --taint-analysis; exit 0",
             "phpmd src/ ansi phpmd.xml --ignore-violations-on-exit"
-        ]
+        ],
+        "test": "phpunit --testdox --colors --testsuite unit tests"
     }
 }
