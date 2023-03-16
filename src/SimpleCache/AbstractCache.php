@@ -30,7 +30,7 @@ abstract class AbstractCache implements Cache {
     /**
      * @param ClockInterface $clock Clock to obtain a reference time from when converting `DateInterval`s to seconds
      */
-    protected function __construct(protected readonly ClockInterface $clock) {
+    public function __construct(protected readonly ClockInterface $clock) {
     }
 
     protected static function validateKey(string $key): void {
