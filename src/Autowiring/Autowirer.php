@@ -49,6 +49,7 @@ use ReflectionProperty;
  */
 class Autowirer {
     // TODO: Support variadics, supplying exactly one argument? Treat as optional?
+    // TODO: Expand with different strategies to autowire variables, like PHP-DI Invoker?
     /**
      * @param ContainerInterface $container Container from which to obtain autowired dependencies
      */
@@ -74,8 +75,10 @@ class Autowirer {
             throw new AutowiringException("Failed to reflect Closure", previous: $e);
         }
 
+        $resolvedArgs = $this->resolveFunctionArgs($function, $arguments);
+
         try {
-            return $callable(...$this->resolveFunctionArgs($function, $arguments));
+            return $callable(...$resolvedArgs);
         } catch (Exception $e) {
             throw new AutowiringException("Failed to call autowired callable", previous: $e);
         }
@@ -102,18 +105,20 @@ class Autowirer {
         }
 
         $constructor = (new ReflectionClass($className))->getConstructor();
-        try {
-            if ($constructor === null) {
-                if (count($arguments) !== 0) {
-                    throw new AutowiringException(
-                        "Autowired class '$className' does not have a constructor, but arguments provided"
-                    );
-                }
-
-                return new $className();
-            } else {
-                return new $className(...$this->resolveFunctionArgs($constructor, $arguments));
+        if ($constructor === null) {
+            if (count($arguments) !== 0) {
+                throw new AutowiringException(
+                    "Autowired class '$className' does not have a constructor, but argument(s) provided"
+                );
             }
+
+            $resolvedArgs = [];
+        } else {
+            $resolvedArgs = $this->resolveFunctionArgs($constructor, $arguments);
+        }
+
+        try {
+            return new $className(...$resolvedArgs);
         } catch (Exception $e) {
             throw new AutowiringException("Failed to instantiate autowired class '$className'", previous: $e);
         }
@@ -154,6 +159,7 @@ class Autowirer {
                 }
 
                 try {
+                    // resolveFunctionArgs() is in try block so the exception message contains the method name
                     // [ $object, $method->getName() ](...$args);
                     $method->invokeArgs($object, $this->resolveFunctionArgs($method));
                 } catch (Exception $e) {
@@ -219,12 +225,12 @@ class Autowirer {
                 return false;
             }
 
-            throw new AutowiringException("Autowired variable '$name' is missing type hint");
+            throw new AutowiringException("Autowired variable '$name' is missing type");
         } elseif (!($type instanceof ReflectionNamedType) ||
             ($variable instanceof ReflectionProperty && $type->isBuiltin())) {
             // Type is a UnionType, IntersectionType or a built-in type on a property
             // Note that T|null is NOT a UnionType, but a NamedType with allowsNull()
-            throw new AutowiringException("Autowired variable '$name' has unsupported type hint");
+            throw new AutowiringException("Autowired variable '$name' has unsupported type");
         }
 
         $typeName = $type->getName();
@@ -252,7 +258,7 @@ class Autowirer {
 
         // Dependency is required
         if ($type->isBuiltin()) {
-            throw new AutowiringException("Autowired variable '$name' is not autowireable, but required");
+            throw new AutowiringException("Autowired variable '$name' has unsupported type, but is required");
         } elseif (Util::isClassType($typeName)) {
             throw new AutowiringException(
                 "Autowired variable '$name' dependency is unsatisfied, but required (no default and not nullable)"
