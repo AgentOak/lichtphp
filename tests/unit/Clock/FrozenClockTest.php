@@ -8,7 +8,7 @@ use LichtPHP\Clock\FrozenClock;
 use PHPUnit\Framework\TestCase;
 
 class FrozenClockTest extends TestCase {
-    public function testReturnsGivenValue(): void {
+    public function testReturnsGivenTime(): void {
         $timestamp = 123456.123456;
         $clock = new FrozenClock(new DateTimeImmutable("@$timestamp"));
         $this->assertEqualsWithDelta($timestamp, $clock->now()->format("U.u"), 0.001);
