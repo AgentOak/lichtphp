@@ -12,7 +12,6 @@ use Psr\Container\ContainerExceptionInterface;
  * @see ContainerExceptionInterface
  * @see ArrayContainer
  * @see Container
- * @see AutowiringException
  */
 abstract class ContainerException extends Exception implements ContainerExceptionInterface {
 }
