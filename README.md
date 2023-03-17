@@ -1,7 +1,9 @@
 ## lichtphp
 
-Yet another lightweight PHP framework. For PHP 8.1+ only.
+Yet another modern PHP framework. For PHP 8.1+ only.
 Features PSR-11 dependency injection with autowiring.
+
+Currently in development with many pending TODOs littered throughout the code.
 
 ### Usage
 
@@ -12,15 +14,21 @@ structure](https://github.com/php-pds/skeleton).
 
 First, install development dependencies through composer:
 
-- `composer install --dev`
+```
+composer install --dev
+```
 
 Run static analysis:
 
-- `composer analyze`
+```
+composer analyze
+```
 
 Run tests:
 
-- `composer test`
+```
+composer test
+```
 
 ### Feature table
 
