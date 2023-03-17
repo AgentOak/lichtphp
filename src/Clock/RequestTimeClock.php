@@ -10,7 +10,11 @@ use RuntimeException;
 /**
  * Implementation of PSR-20: Clock based on `$_SERVER` request time. For CLI this contains the script start time.
  *
+ * This implementation is not suitable for long-running CLI applications. For example, the TTL cache invalidation would
+ * not work for some `Cache` implementations.
+ *
  * @see FrozenClock
+ * @see Cache
  */
 final class RequestTimeClock extends FrozenClock {
     /**
