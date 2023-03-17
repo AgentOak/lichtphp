@@ -15,7 +15,7 @@ structure](https://github.com/php-pds/skeleton).
 First, install development dependencies through composer:
 
 ```
-composer install --dev
+composer install
 ```
 
 Run static analysis:
