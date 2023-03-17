@@ -285,14 +285,14 @@ class Autowirer {
         }
 
         // Dependency is required
-        if ($type->isBuiltin()) {
+        if ($type->isBuiltin() || $typeName === "self") {
             throw new DefinitionException("Autowired variable '$name' has unsupported type, but is required");
         } elseif (Util::isClassType($typeName)) {
             throw new UnsatisfiedDependencyException(
                 "Autowired variable '$name' dependency is unsatisfied, but required (no default and not nullable)"
             );
         } else {
-            throw new DefinitionException("Autowired variable '$name' requires non-existent class {$typeName}");
+            throw new DefinitionException("Autowired variable '$name' requires non-existent class '{$typeName}'");
         }
     }
 }
