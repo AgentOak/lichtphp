@@ -18,13 +18,13 @@ class RequestTimeClockTest extends TestCase {
     }
 
     public function testReturnsRequestTime(): void {
-        $this->assertEqualsWithDelta($_SERVER["REQUEST_TIME_FLOAT"], $this->clock->now()->format("U.u"), 0.001);
+        self::assertEqualsWithDelta($_SERVER["REQUEST_TIME_FLOAT"], $this->clock->now()->format("U.u"), 0.001);
     }
 
     public function testTimeIsFrozen(): void {
         $first = $this->clock->now();
         usleep(2);
         $second = $this->clock->now();
-        $this->assertEquals($first, $second);
+        self::assertEquals($first, $second);
     }
 }

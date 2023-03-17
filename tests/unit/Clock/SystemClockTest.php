@@ -18,7 +18,7 @@ final class SystemClockTest extends TestCase {
     }
 
     public function testReturnsCurrentTime(): void {
-        $this->assertGreaterThanOrEqual(microtime(true), $this->clock->now()->format("U.u"));
+        self::assertGreaterThanOrEqual(microtime(true), $this->clock->now()->format("U.u"));
     }
 
     public function testTimeIncreasesMonotonically(): void {
@@ -26,7 +26,7 @@ final class SystemClockTest extends TestCase {
         $second = $this->clock->now();
         usleep(2);
         $third = $this->clock->now();
-        $this->assertGreaterThanOrEqual($first->format("U.u"), $second->format("U.u"));
-        $this->assertGreaterThan($second->format("U.u"), $third->format("U.u"));
+        self::assertGreaterThanOrEqual($first->format("U.u"), $second->format("U.u"));
+        self::assertGreaterThan($second->format("U.u"), $third->format("U.u"));
     }
 }

@@ -14,7 +14,7 @@ class FrozenClockTest extends TestCase {
     public function testReturnsGivenTime(): void {
         $timestamp = 123456.123456;
         $clock = new FrozenClock(new DateTimeImmutable("@$timestamp"));
-        $this->assertEqualsWithDelta($timestamp, $clock->now()->format("U.u"), 0.001);
+        self::assertEqualsWithDelta($timestamp, $clock->now()->format("U.u"), 0.001);
     }
 
     public function testTimeIsFrozen(): void {
@@ -22,6 +22,6 @@ class FrozenClockTest extends TestCase {
         $first = $clock->now();
         usleep(2);
         $second = $clock->now();
-        $this->assertEquals($first, $second);
+        self::assertEquals($first, $second);
     }
 }
