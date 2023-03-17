@@ -7,6 +7,9 @@ use LichtPHP\Clock\RequestTimeClock;
 use PHPUnit\Framework\TestCase;
 use Psr\Clock\ClockInterface;
 
+/**
+ * @see RequestTimeClock
+ */
 class RequestTimeClockTest extends TestCase {
     private ClockInterface $clock;
 

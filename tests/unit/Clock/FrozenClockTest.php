@@ -7,6 +7,9 @@ use DateTimeImmutable;
 use LichtPHP\Clock\FrozenClock;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @see FrozenClock
+ */
 class FrozenClockTest extends TestCase {
     public function testReturnsGivenTime(): void {
         $timestamp = 123456.123456;

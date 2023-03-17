@@ -7,6 +7,9 @@ use LichtPHP\Clock\SystemClock;
 use PHPUnit\Framework\TestCase;
 use Psr\Clock\ClockInterface;
 
+/**
+ * @see SystemClock
+ */
 final class SystemClockTest extends TestCase {
     private ClockInterface $clock;
 
