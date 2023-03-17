@@ -4,7 +4,8 @@ declare(strict_types=1);
 namespace LichtPHP\Autowiring;
 
 use Closure;
-use Exception;
+use DomainException;
+use InvalidArgumentException;
 use LichtPHP\Util;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -16,6 +17,7 @@ use ReflectionNamedType;
 use ReflectionObject;
 use ReflectionParameter;
 use ReflectionProperty;
+use Throwable;
 
 /**
  * Provides methods for autowiring, obtaining dependency instances from a ContainerInterface. Autowiring is implemented
@@ -49,7 +51,7 @@ use ReflectionProperty;
  */
 class Autowirer {
     // TODO: Support variadics, supplying exactly one argument? Treat as optional?
-    // TODO: Expand with different strategies to autowire variables, like PHP-DI Invoker?
+    // TODO: Expand with different strategies to autowire variables? separate ContainerInterface for variable name?
     /**
      * @param ContainerInterface $container Container from which to obtain autowired dependencies
      */
@@ -65,22 +67,26 @@ class Autowirer {
      * @param array<string, mixed> $arguments Named arguments to pass to the callable. Only the remaining parameters
      *                                        will be autowired. Unused arguments are considered an error
      * @return T The return value of the given `$callable`, or `null` for a void function
-     * @throws AutowiringException If autowiring failed, e.g. a required dependency is unavailable
+     * @throws DefinitionException
+     * @throws UnsatisfiedDependencyException
+     * @throws InvocationException
+     * @throws DomainException When an unused argument was given
      * @see Autowirer for semantics
      */
     public function call(callable $callable, array $arguments = []): mixed {
         try {
             $function = new ReflectionFunction($callable instanceof Closure ? $callable : $callable(...));
         } catch (ReflectionException $e) {
-            throw new AutowiringException("Failed to reflect Closure", previous: $e);
+            // According to ReflectionFunction documentation, this should not be possible to occur with Closures
+            throw new InvalidArgumentException("Failed to reflect Closure", previous: $e);
         }
 
         $resolvedArgs = $this->resolveFunctionArgs($function, $arguments);
 
         try {
             return $callable(...$resolvedArgs);
-        } catch (Exception $e) {
-            throw new AutowiringException("Failed to call autowired callable", previous: $e);
+        } catch (Throwable $e) {
+            throw new InvocationException("Failed to call autowired callable", previous: $e);
         }
     }
 
@@ -95,19 +101,33 @@ class Autowirer {
      * @param array<string, mixed> $arguments Named arguments to pass to the constructor. Only the remaining
      *                                        parameters will be autowired. Unused arguments are considered an error
      * @return T An instance of the given `$className`
-     * @throws AutowiringException If autowiring failed, e.g. a required dependency is unavailable
+     * @throws DefinitionException
+     * @throws UnsatisfiedDependencyException
+     * @throws InvocationException
+     * @throws InvalidArgumentException When `$className` is not a class-string, i.e. no class with this name exists
+     * @throws DomainException When an unused argument was given
      * @see Autowirer::autowire()
      * @see Autowirer for semantics
      */
     public function instantiate(string $className, array $arguments = []): object {
-        if (!Util::isInstantiableClass($className)) {
-            throw new AutowiringException("Autowired class '$className' is not an instantiable class");
+        if (!Util::isClassType($className)) {
+            throw new InvalidArgumentException("Autowired class '$className' does not exist or is not a class");
         }
 
-        $constructor = (new ReflectionClass($className))->getConstructor();
+        if (!Util::isInstantiableClass($className)) {
+            throw new DefinitionException("Autowired class '$className' is not an instantiable class");
+        }
+
+        try {
+            $constructor = (new ReflectionClass($className))->getConstructor();
+        } catch (ReflectionException $e) {
+            // According to ReflectionClass documentation, this should not be able to occur after the check above
+            throw new InvalidArgumentException("Failed to reflect Class", previous: $e);
+        }
+
         if ($constructor === null) {
             if (count($arguments) !== 0) {
-                throw new AutowiringException(
+                throw new DomainException(
                     "Autowired class '$className' does not have a constructor, but argument(s) provided"
                 );
             }
@@ -119,15 +139,17 @@ class Autowirer {
 
         try {
             return new $className(...$resolvedArgs);
-        } catch (Exception $e) {
-            throw new AutowiringException("Failed to instantiate autowired class '$className'", previous: $e);
+        } catch (Throwable $e) {
+            throw new InvocationException("Failed to instantiate autowired class '$className'", previous: $e);
         }
     }
 
     /**
      * Autowire methods and properties of an object that have the `Autowired` attribute.
      *
-     * @throws AutowiringException
+     * @throws DefinitionException
+     * @throws UnsatisfiedDependencyException
+     * @throws InvocationException
      * @see Autowired for semantics
      */
     public function autowire(object $object): void {
@@ -137,7 +159,7 @@ class Autowirer {
         foreach ($properties as $property) {
             if (count($property->getAttributes(Autowired::class)) !== 0) {
                 if (!$property->isPublic() || $property->isReadOnly() || $property->isStatic()) {
-                    throw new AutowiringException(
+                    throw new DefinitionException(
                         "Autowired property '{$class->getName()}::{$property->getName()}' is not writable"
                     );
                 }
@@ -153,7 +175,7 @@ class Autowirer {
         foreach ($methods as $method) {
             if (count($method->getAttributes(Autowired::class)) !== 0 && !$method->isConstructor()) {
                 if (!$method->isPublic() || $method->isAbstract() || $method->isStatic()) {
-                    throw new AutowiringException(
+                    throw new DefinitionException(
                         "Autowired method '{$class->getName()}::{$method->getName()}' is not invokable"
                     );
                 }
@@ -162,8 +184,8 @@ class Autowirer {
                     // resolveFunctionArgs() is in try block so the exception message contains the method name
                     // [ $object, $method->getName() ](...$args);
                     $method->invokeArgs($object, $this->resolveFunctionArgs($method));
-                } catch (Exception $e) {
-                    throw new AutowiringException(
+                } catch (Throwable $e) {
+                    throw new InvocationException(
                         "Failed to call autowired method '{$class->getName()}::{$method->getName()}'",
                         previous: $e
                     );
@@ -175,7 +197,9 @@ class Autowirer {
     /**
      * @param array<string, mixed> $providedArgs
      * @return array<string, ?object>
-     * @throws AutowiringException
+     * @throws DefinitionException
+     * @throws UnsatisfiedDependencyException
+     * @throws DomainException
      */
     protected function resolveFunctionArgs(ReflectionFunctionAbstract $function, array $providedArgs = []): array {
         $arguments = [];
@@ -183,7 +207,7 @@ class Autowirer {
         // TODO: Cache parameter lists to avoid reflection API overhead?
         foreach ($function->getParameters() as $parameter) {
             if ($parameter->isPassedByReference() || $parameter->isVariadic()) {
-                throw new AutowiringException("Parameters passed by-reference and variadics are not allowed");
+                throw new DefinitionException("Parameters passed by-reference and variadics are not allowed");
             }
 
             $name = $parameter->getName();
@@ -198,7 +222,7 @@ class Autowirer {
         }
 
         if (count($providedArgs) !== 0) {
-            throw new AutowiringException("Leftover argument(s) provided");
+            throw new DomainException("Leftover argument(s) provided");
         }
 
         // Note that autowired function calls are valid even if they have no autowireable parameters
@@ -209,7 +233,8 @@ class Autowirer {
      * @param-out ?object $value
      * @return bool `false` if this variable should not be assigned, i.e. retain its default value, or `true` if it
      *              should be set to the value placed in the reference parameter `$value`
-     * @throws AutowiringException
+     * @throws DefinitionException
+     * @throws UnsatisfiedDependencyException
      */
     protected function resolveVariable(
         ReflectionParameter|ReflectionProperty $variable,
@@ -225,12 +250,12 @@ class Autowirer {
                 return false;
             }
 
-            throw new AutowiringException("Autowired variable '$name' is missing type");
+            throw new DefinitionException("Autowired variable '$name' is missing type");
         } elseif (!($type instanceof ReflectionNamedType) ||
             ($variable instanceof ReflectionProperty && $type->isBuiltin())) {
             // Type is a UnionType, IntersectionType or a built-in type on a property
             // Note that T|null is NOT a UnionType, but a NamedType with allowsNull()
-            throw new AutowiringException("Autowired variable '$name' has unsupported type");
+            throw new DefinitionException("Autowired variable '$name' has unsupported type");
         }
 
         $typeName = $type->getName();
@@ -243,7 +268,10 @@ class Autowirer {
                 $value = $this->container->get($typeName);
                 return true;
             } catch (ContainerExceptionInterface $e) {
-                throw new AutowiringException("Failed wiring variable '$name'", previous: $e);
+                throw new UnsatisfiedDependencyException(
+                    "Failed obtaining dependency '$typeName' for variable '$name'",
+                    previous: $e
+                );
             }
         }
 
@@ -258,13 +286,13 @@ class Autowirer {
 
         // Dependency is required
         if ($type->isBuiltin()) {
-            throw new AutowiringException("Autowired variable '$name' has unsupported type, but is required");
+            throw new DefinitionException("Autowired variable '$name' has unsupported type, but is required");
         } elseif (Util::isClassType($typeName)) {
-            throw new AutowiringException(
+            throw new UnsatisfiedDependencyException(
                 "Autowired variable '$name' dependency is unsatisfied, but required (no default and not nullable)"
             );
         } else {
-            throw new AutowiringException("Autowired variable '$name' requires non-existent class {$typeName}");
+            throw new DefinitionException("Autowired variable '$name' requires non-existent class {$typeName}");
         }
     }
 }

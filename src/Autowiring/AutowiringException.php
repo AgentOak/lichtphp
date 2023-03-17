@@ -11,5 +11,5 @@ use Exception;
  * @see Autowirer
  * @see Autowired
  */
-class AutowiringException extends Exception {
+abstract class AutowiringException extends Exception {
 }
