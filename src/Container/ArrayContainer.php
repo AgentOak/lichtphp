@@ -13,7 +13,7 @@ use Psr\Container\NotFoundExceptionInterface;
  * using `set()` can be retrieved with `get()`. The container automatically contains itself, under the
  * `Psr\Container\ContainerInterface` ID, this interfaces fully-qualified name and its own fully-qualified class name.
  *
- * This container support IDs that specify a non-built-in type, i.e. a class or interface (including those predefined
+ * This container supports IDs that specify a non-built-in type, i.e. a class or interface (including those predefined
  * in the PHP library). The validity of IDs is only checked when adding elements into the container to be compliant with
  * PSR-11. Naturally, it follows that for invalid IDs, `has()` can only ever return `false`, and `get()` can only throw
  * a `NotFoundExceptionInterface`.

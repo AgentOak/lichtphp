@@ -10,8 +10,8 @@ use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
 /**
- * Extends PSR-11: Container Interface and ArrayContainer with on-demand instantiation and autowiring. Always contains
- * itself under all applicable fully-qualified interface and class names, as well as the Autowirer used to autowire
+ * Extends PSR-11: Container Interface and `ArrayContainer` with on-demand instantiation and autowiring. Always contains
+ * itself under all applicable fully-qualified interface and class names, as well as the `Autowirer` used to autowire
  * instances under the `LichtPHP\Autowiring\Autowirer` name.
  *
  * Entries registered with `link()` or `factory()` are lazy-loaded: they will only be created when they are obtained
