@@ -68,6 +68,8 @@
                 <element key="is_null" value="null"/>
                 <element key="gettype" value="null"/>
                 <element key="settype" value="null"/>
+                <element key="compact" value="null"/>
+                <element key="extract" value="null"/>
                 <!-- No dynamic constants, use const instead -->
                 <element key="define" value="null"/>
                 <element key="defined" value="null"/>
@@ -78,6 +80,8 @@
                 <element key="is_double" value="is_float"/>
                 <element key="is_real" value="is_float"/>
                 <element key="is_integer" value="is_int"/>
+                <element key="sizeof" value="count"/>
+                <!-- Use short array syntax instead -->
                 <element key="array" value="null"/>
                 <!-- Use casts instead -->
                 <element key="boolval" value="null"/>
@@ -133,7 +137,7 @@
                 <element key="error_get_last" value="null"/>
 
                 <!-- Disabled functions (except ini_ getters) -->
-                <!-- Low level system functions not necessary for web apps, disabled -->
+                <!-- Low level system functions not necessary for web apps -->
                 <element key="pcntl_alarm" value="null"/>
                 <element key="pcntl_async_signals" value="null"/>
                 <element key="pcntl_errno" value="null"/>
@@ -226,7 +230,6 @@
                 <element key="openlog" value="null"/>
                 <!-- Dangerous -->
                 <element key="eval" value="null"/>
-                <element key="create_function" value="null"/>
                 <element key="__halt_compiler" value="exit"/>
             </property>
         </properties>
