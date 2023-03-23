@@ -317,7 +317,7 @@ class AutowirerResolveTest extends TestCase {
         ));
     }
 
-    public function testWorkWithMultipleParameters(): void {
+    public function testWorksWithMultipleParameters(): void {
         $this->assertSame(self::TEST_TIME + 7 + 11 + 17, $this->autowirer->call(
             function (ClockInterface $clock, ?Cache $cache, bool $addSeven, ?int $value = 17) {
                 return $clock->now()->getTimestamp() + ($addSeven ? 7 : 0) + ($cache === null ? 11 : 13) + $value;
